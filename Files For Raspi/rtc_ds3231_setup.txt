@@ -1,0 +1,77 @@
+
+Raspberry Pi: Use DS3231 RTC as the Only Clock Source (UTC, No Internet Sync)
+==============================================================================
+
+Step 1: Wire DS3231 to Raspberry Pi (I2C)
+-----------------------------------------
+| DS3231 Pin | Raspberry Pi Pin       |
+|------------|------------------------|
+| VCC        | 3.3V (Pin 1 or 17)     |
+| GND        | GND (Pin 6 or 9)       |
+| SDA        | SDA (GPIO2, Pin 3)     |
+| SCL        | SCL (GPIO3, Pin 5)     |
+
+Step 2: Enable I2C
+------------------
+Run:
+    sudo raspi-config
+
+Navigate to:
+    Interface Options > I2C > Enable
+
+Then reboot:
+    sudo reboot
+
+Step 3: Configure RTC Overlay
+-----------------------------
+Edit the firmware config:
+    sudo nano /boot/firmware/config.txt
+
+Add this line at the bottom:
+    dtoverlay=i2c-rtc,ds3231
+
+Save and exit.
+
+Step 4: Disable Internet Time Sync
+----------------------------------
+Run the following commands:
+    sudo timedatectl set-ntp false
+    sudo systemctl stop systemd-timesyncd
+    sudo systemctl disable systemd-timesyncd
+    sudo systemctl mask systemd-timesyncd
+
+Step 5: Tell OS RTC is in UTC
+-----------------------------
+Edit the adjtime file:
+    sudo nano /etc/adjtime
+
+Replace contents with:
+    0.0 0 0
+    0
+    UTC
+
+Save and exit.
+
+Step 6: (Optional) Set System Time and Sync to RTC
+--------------------------------------------------
+Set system time (in UTC):
+    sudo timedatectl set-timezone UTC
+    sudo date -s "2025-05-20 12:00:00"   # Replace with current UTC time
+    sudo hwclock -w                     # Write system time to RTC
+
+Step 7: Set System Time from RTC on Boot
+----------------------------------------
+Edit rc.local:
+    sudo nano /etc/rc.local
+
+Add before the 'exit 0' line:
+    hwclock -s
+
+Save and exit.
+
+Result:
+-------
+- DS3231 sets system time at boot
+- Time remains in UTC
+- Internet time sync is disabled
+- RTC handles all timekeeping, even without network
