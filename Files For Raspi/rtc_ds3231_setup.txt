@@ -11,6 +11,8 @@ Step 1: Wire DS3231 to Raspberry Pi (I2C)
 | SDA        | SDA (GPIO2, Pin 3)     |
 | SCL        | SCL (GPIO3, Pin 5)     |
 
+*************Can work with the 4-channle mutliport*** You will need to verify that all the ports are still active/ working******
+
 Step 2: Enable I2C
 ------------------
 Run:
@@ -30,7 +32,7 @@ Edit the firmware config:
 Add this line at the bottom:
     dtoverlay=i2c-rtc,ds3231
 
-Save and exit.
+Save and exit. (ctl x)
 
 Step 4: Disable Internet Time Sync
 ----------------------------------
@@ -50,9 +52,9 @@ Replace contents with:
     0
     UTC
 
-Save and exit.
+Save and exit. (ctl x)
 
-Step 6: (Optional) Set System Time and Sync to RTC
+Step 6: Set System Time and Sync to RTC
 --------------------------------------------------
 Set system time (in UTC):
     sudo timedatectl set-timezone UTC
@@ -61,13 +63,13 @@ Set system time (in UTC):
 
 Step 7: Set System Time from RTC on Boot
 ----------------------------------------
-Edit rc.local:
+Edit rc.local: ***************************Note this is where the Penetrometer execution code is running on boot...don't delete that part of the file, just add this below
     sudo nano /etc/rc.local
 
 Add before the 'exit 0' line:
     hwclock -s
 
-Save and exit.
+Save and exit. (ctl x)
 
 Result:
 -------
