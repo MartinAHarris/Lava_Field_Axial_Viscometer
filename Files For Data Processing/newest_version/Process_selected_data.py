@@ -187,5 +187,10 @@ df.to_csv(name + '_processed_dat.csv', index=False)
 
 
 
+data_out = np.c_[cal_visc, Vmavgcal, depth, avg_vel]
+df = pd.DataFrame(data_out, columns=['Calibrated Viscosity', 'Smoothed Calibrated Viscosity', 'Depth', 'Average Velocity'])
+df.to_csv(name + '_processed_dat.csv', index=False)
+
+
 
 
